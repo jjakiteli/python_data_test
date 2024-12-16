@@ -21,4 +21,4 @@ repos:
     rev: v1.13.0
     hooks:
       - id: mypy
-        # args: ['fastapi', 'pydantic-geojson']
+        # args: ['fastapi', 'pydantic-geojson', 'sqlalchemy',]
