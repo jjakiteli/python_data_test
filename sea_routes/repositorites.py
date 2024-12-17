@@ -1,31 +1,15 @@
 import json
 
 from pydantic_geojson import FeatureCollectionModel, FeatureModel, PointModel
-from sqlalchemy import Float, Integer, Text
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.future import select
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from sea_routes.exceptions import RouteNotFoundException
-from sea_routes.models import RouteModel
+from sea_routes.models import Route, RouteModel
 
 DATABASE_URL = "sqlite+aiosqlite:///./db/sea_routes.db"
 engine = create_async_engine(DATABASE_URL, echo=True)
 SessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False)
-
-
-class Base(DeclarativeBase):
-    pass
-
-
-class Route(Base):
-    __tablename__ = "routes"
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    from_port: Mapped[str] = mapped_column(Text)
-    to_port: Mapped[str] = mapped_column(Text)
-    leg_duration: Mapped[float] = mapped_column(Float)
-    points: Mapped[str] = mapped_column(Text)
 
 
 class SeaRoutesRepository:
