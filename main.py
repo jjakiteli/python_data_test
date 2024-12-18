@@ -1,8 +1,11 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
+from insert_db_data import insert_data
 from sea_routes.exceptions import RouteNotFoundException
 from sea_routes.router import sea_routes_router
+
+insert_data()
 
 app = FastAPI()
 app.include_router(sea_routes_router)

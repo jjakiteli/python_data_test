@@ -1,0 +1,6 @@
+Generic single-database configuration.
+
+
+alembic init alembic
+alembic revision --autogenerate -m "create sea_routes"
+alembic upgrade head

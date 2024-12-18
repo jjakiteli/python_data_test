@@ -1,47 +1,26 @@
-import csv
-import json
-import sqlite3
+import pandas as pd
+from sqlalchemy import MetaData, Table, create_engine
+from sqlalchemy.orm import sessionmaker
 
-connection = sqlite3.connect("db/sea_routes.db")
-cursor = connection.cursor()
 
-cursor.execute(
-    """
-CREATE TABLE IF NOT EXISTS routes (
-    id INTEGER,
-    from_port TEXT,
-    to_port TEXT,
-    leg_duration INTEGER,
-    points TEXT
-)
-"""
-)
+def insert_data():
+    DATABASE_URL = "sqlite:///db/sea_routes.db"
+    engine = create_engine(DATABASE_URL)
+    metadata = MetaData()
+    SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
+    session_factory = SessionLocal()
 
-csv.field_size_limit(10**8)
+    routes_table = Table("sea_routes", metadata, autoload_with=engine)
 
-with open("web_challenge.csv", "r") as file:
-    reader = csv.reader(file)
-    for i, vals in enumerate(reader):
-        if i == 0:
-            continue
+    csv_data = pd.read_csv("web_challenge.csv")
 
-        id = vals[0]
-        from_port = vals[1]
-        to_port = vals[2]
-        leg_duration = vals[3]
-        points = json.dumps(vals[4])
-        cursor.execute(
-            "INSERT INTO routes VALUES (?, ?, ?, ?, ?)",
-            (
-                id,
-                from_port,
-                to_port,
-                leg_duration,
-                points,
-            ),
-        )
-    connection.commit()
+    current_entries = session_factory.query(routes_table).all()
+    route_ids = {route.route_id for route in current_entries}
 
-print("Database data created!")
+    new_data = csv_data[~csv_data["route_id"].isin(route_ids)]
 
-connection.close()
+    if not new_data.empty:
+        new_data.to_sql("sea_routes", con=engine, if_exists="append", index=False)
+        print(f"{len(new_data)} new records added.")
+    else:
+        print("No new records to add.")

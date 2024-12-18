@@ -14,10 +14,11 @@ class Base(DeclarativeBase):
     pass
 
 
-class Route(Base):
-    __tablename__ = "routes"
+class Routes(Base):
+    __tablename__ = "sea_routes"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    route_id: Mapped[int] = mapped_column(Integer)
     from_port: Mapped[str] = mapped_column(Text)
     to_port: Mapped[str] = mapped_column(Text)
     leg_duration: Mapped[float] = mapped_column(Float)
