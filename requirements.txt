@@ -6,3 +6,6 @@ sqlalchemy
 aiosqlite
 alembic
 pandas
+pytest
+pytest-asyncio
+httpx
